@@ -1,0 +1,31 @@
+---
+name: Deploy to OpenShift (reusable-workflow)
+
+on:
+  workflow_call:
+    inputs:
+      datacenters:
+        required: false
+        type: string
+        default: "mtl"
+      project-name:
+        required: false
+        type: string
+        default: "platform-default"
+    secrets:
+      oc_server:
+        required: true
+      oc_token:
+        required: true
+
+jobs:
+  openshift-deploy:
+    name: "Deploy to OpenShift"
+    runs-on: ubuntu-latest
+    container: openshift/origin-cli:latest
+    steps:
+      - name: Login and deploy to OpenShift
+        run: |
+          oc login ${{ secrets.oc_server }} --token ${{ secrets.oc_token }} --insecure-skip-tls-verify
+#          oc new-project ${{ inputs.project-name }} || oc project ${{ inputs.project-name }}
+#          oc create -f configs || oc apply -f configs
